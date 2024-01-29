@@ -1,0 +1,28 @@
+---
+- name: Install and Configure Web Server
+  hosts: test
+  become: yes
+
+  tasks:
+    - name: Install Apache web server
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Copy custom HTML index file
+      copy:
+        src: /root/index.html
+        dest: /var/www/html/index.html
+      notify: Restart Apache
+
+  handlers:
+    - name: Restart Apache
+      service:
+        name: httpd
+        state: restarted
